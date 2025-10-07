@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+ <!-- 
+  	<meta http-equiv="refresh" content="5"; />
+
+<meta http-equiv="refresh" content="5; url=https://www.patreon.com/c/TimOberle" />
+-->
+  <title>Redirect...</title>
+</head>
+
+<body>
+  <noscript>This redirector requires JavaScript.</noscript>
+  <p id="1">Redirecting...</p>
+  <p id="2"></p>
+  <p id="3"></p>
+
+  <script> //testet
+    //==Loop prevention or rate limit
+function Ratelimited()
+  {
+    //false default first opening
+    var result = false;
+    var sesStorPath = window.location.href + "/LastVisit";
+    
+    var lastVisit = sessionStorage.getItem(sesStorPath);
+    var currTime = Date.now();
+    
+    //not 1. Visit?
+    if(Number.isFinite(parseInt(lastVisit))){
+      var timeLastVisit = currTime - lastVisit;
+      //only redirect after 530ms later than last redirect
+      result = !(timeLastVisit >= 530);
+      //if loop detected return
+      if (result){
+        //don't update redirected time on rate limited
+        return true;
+      }
+    }
+   
+   //update last redirect and return
+    sessionStorage.setItem
+    (sesStorPath, Date.now());
+    return result;
+  }
+
+function AddHttps(url){
+  var urlUpperCase = url.toUpperCase();
+  if(
+    !urlUpperCase.startsWith("HTTP://")
+ && !urlUpperCase.startsWith("HTTPS://"))
+ {
+   url = "https://" + url;
+  }
+  return url;
+}
+ 
+function isValidUrl(url){
+  try{
+      new URL(url);
+      return true
+    }
+    catch (e) {
+      alert(e);
+      return false;
+  }
+}
+  
+  function Redirect(url){
+    //similar to HTTP redirect
+    try{
+      window.location.href = url;
+    }
+    catch{
+    // similar to clicking a link
+    window.location.replace(url);
+    }
+  }
+  
+function RedirectIssueTitle(url){
+  let xhr = new XMLHttpRequest();
+
+  //Configure as GET-request
+  xhr.open('GET', url);
+
+  //Send the request over the network
+  xhr.send();
+
+  //called after response
+  xhr.onload = function() {
+    if (xhr.status != 200) { 
+      //analyze HTTP status of the response
+      UpdateLine("1", "Aborted")
+      UpdateLine("2", `DB-Entry: ${xhr.responseURL} Error ${xhr.status}: ${xhr.statusText}`);
+      UpdateLine("3", "Invalid link")
+    } else {
+      //response
+      var title = JSON.parse(xhr.response).title;
+      var url = AddHttps(title);
+      if (isValidUrl(url)){
+        Redirect(url);
+      }
+      else {
+        alert("invalid URL: " + url);
+      }
+  }
+  };
+
+  xhr.onerror = function() {
+    alert("Request failed");
+  };''
+}
+
+function UpdateLine(id, txt){
+  document.getElementById(id).innerHTML = txt;
+}
+
+//===Config===
+var apiURL = "https://api.github.com/repos";
+var repoUrl = "/srt4-me/srt4.me-DB"
+var entpoint = "/issues"
+//===Config End===
+
+var pathname = new URL(window.location.href).pathname.split("/");
+
+var nr = pathname[pathname.length - 1];
+var issueUrl = apiURL + repoUrl + entpoint + "/" + nr;
+
+if (Ratelimited()){
+  UpdateLine("2", "Aborted");
+  UpdateLine("3", "Ratelimited or Forward Looped");
+  alert("Ratelimited please refresh the site");
+}
+else{
+  RedirectIssueTitle(issueUrl);
+}
+  </script>
+  <!--
+  <script src="complete.js"></script>
+  <script src="main.js"></script>
+  -->
+</body>
+</html>
