@@ -2,143 +2,814 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
- <!-- 
-  	<meta http-equiv="refresh" content="5"; />
-
-<meta http-equiv="refresh" content="5; url=https://www.patreon.com/c/TimOberle" />
--->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Redirect...</title>
+
+  <!--No cache-->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    /* Redirect/Error UI */
+    .redirect-container {
+      text-align: center;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 3rem 2rem;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .redirect-container p {
+      margin: 1rem 0;
+      color: #666;
+      font-size: 1rem;
+    }
+
+    .redirect-container .error {
+      color: #dc2626;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+      padding: 0.75rem;
+      background: #fee2e2;
+      border-radius: 8px;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Smartlink UI (from index-v2.html) */
+    main {
+      width: 100%;
+      max-width: 680px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 3rem 2rem;
+      display: none;
+    }
+
+    main.show {
+      display: block;
+    }
+
+    .profile {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: 600;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: contain;
+      padding: 4px;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #1a1a1a;
+    }
+
+    .bio {
+      color: #666;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .error {
+      color: #dc2626;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+      padding: 0.75rem;
+      background: #fee2e2;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    .loading {
+      text-align: center;
+      color: #666;
+      padding: 2rem;
+    }
+
+    .links {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .links a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 2rem;
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      border: 2px solid #e5e7eb;
+      border-radius: 16px;
+      text-align: center;
+      text-decoration: none;
+      color: #1a1a1a;
+      font-weight: 600;
+      font-size: 1.05rem;
+      letter-spacing: 0.3px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .links a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+      transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .links a::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      border-radius: 14px;
+    }
+
+    .links a:hover::before {
+      left: 100%;
+    }
+
+    .links a:hover::after {
+      opacity: 1;
+    }
+
+    .links a:hover {
+      border-color: #667eea;
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 28px rgba(102, 126, 234, 0.25), 0 4px 12px rgba(0, 0, 0, 0.08);
+      background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+      color: #667eea;
+    }
+
+    .links a:active {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+    }
+
+    footer {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e5e7eb;
+      text-align: center;
+      color: #9ca3af;
+      font-size: 0.875rem;
+      display: none;
+    }
+
+    footer.show {
+      display: block;
+    }
+
+    footer a {
+      color: #667eea;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    footer a:hover {
+      color: #764ba2;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 1rem;
+      }
+
+      main, .redirect-container {
+        padding: 2rem 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .avatar {
+        width: 100px;
+        height: 100px;
+        font-size: 2rem;
+      }
+    }
+  </style>
 </head>
-
 <body>
-  <noscript>This redirector requires JavaScript.</noscript>
-  <p id="1">Redirecting...</p>
-  <p id="2"></p>
-  <p id="3"></p>
+  <noscript>
+    <div class="redirect-container">
+      <div class="error show">This redirector requires JavaScript to be enabled.</div>
+    </div>
+  </noscript>
 
-  <script> //testet
-    //==Loop prevention or rate limit
-function Ratelimited()
-  {
-    //false default first opening
-    var result = false;
-    var sesStorPath = window.location.href + "/LastVisit";
-    
-    var lastVisit = sessionStorage.getItem(sesStorPath);
-    var currTime = Date.now();
-    
-    //not 1. Visit?
-    if(Number.isFinite(parseInt(lastVisit))){
-      var timeLastVisit = currTime - lastVisit;
-      //only redirect after 530ms later than last redirect
-      result = !(timeLastVisit >= 530);
-      //if loop detected return
-      if (result){
-        //don't update redirected time on rate limited
+  <!-- Redirect/Error Container -->
+  <div class="redirect-container" id="redirectContainer">
+    <div class="spinner" id="redirectSpinner"></div>
+    <p id="redirectMessage">Redirecting...</p>
+    <p id="redirectDetails"></p>
+    <p id="redirectError" class="error" style="display: none;"></p>
+  </div>
+
+  <!-- Smartlink Page Container -->
+  <main id="smartlinkContainer">
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>Loading profile...</p>
+    </div>
+
+    <div class="profile" id="profile" style="display: none;">
+      <div class="avatar" id="avatar"></div>
+      <h1 id="name">Loading...</h1>
+      <p class="bio" id="bio">Loading profile information...</p>
+      <div class="error" id="error"></div>
+    </div>
+
+    <nav class="links" id="links"></nav>
+
+    <footer id="footer">
+      <p>Powered by <a href="https://srt4.me" target="_blank" rel="noopener noreferrer">srt4.me</a></p>
+    </footer>
+  </main>
+
+  <script>
+    // Configuration
+    const CONFIG = {
+      apiURL: 'https://api.github.com/repos',
+      repoUrl: '/srt4-me/srt4.me-DB',
+      endpoint: '/issues'
+    };
+
+    // ========== Rate Limiting ==========
+    function isRateLimited() {
+      var result = false;
+      var sesStorPath = window.location.href + "/LastVisit";
+      
+      var lastVisit = sessionStorage.getItem(sesStorPath);
+      var currTime = Date.now();
+      
+      // Not first visit?
+      if (Number.isFinite(parseInt(lastVisit))) {
+        var timeLastVisit = currTime - lastVisit;
+        // Only redirect after 530ms later than last redirect
+        result = !(timeLastVisit >= 530);
+        // If loop detected return
+        if (result) {
+          // Don't update redirected time on rate limited
+          return true;
+        }
+      }
+     
+      // Update last redirect and return
+      sessionStorage.setItem(sesStorPath, Date.now());
+      return result;
+    }
+
+    // ========== URL Utilities ==========
+    function addHttps(url) {
+      if (!url) return url;
+      var urlUpperCase = url.toUpperCase();
+      if (!urlUpperCase.startsWith("HTTP://") && !urlUpperCase.startsWith("HTTPS://")) {
+        url = "https://" + url;
+      }
+      return url;
+    }
+
+    function isValidUrl(url) {
+      try {
+        new URL(url);
         return true;
+      } catch (e) {
+        return false;
       }
     }
-   
-   //update last redirect and return
-    sessionStorage.setItem
-    (sesStorPath, Date.now());
-    return result;
-  }
 
-function AddHttps(url){
-  var urlUpperCase = url.toUpperCase();
-  if(
-    !urlUpperCase.startsWith("HTTP://")
- && !urlUpperCase.startsWith("HTTPS://"))
- {
-   url = "https://" + url;
-  }
-  return url;
-}
- 
-function isValidUrl(url){
-  try{
-      new URL(url);
-      return true
-    }
-    catch (e) {
-      alert(e);
-      return false;
-  }
-}
-  
-  function Redirect(url){
-    //similar to HTTP redirect
-    try{
-      window.location.href = url;
-    }
-    catch{
-    // similar to clicking a link
-    window.location.replace(url);
-    }
-  }
-  
-function RedirectIssueTitle(url){
-  let xhr = new XMLHttpRequest();
-
-  //Configure as GET-request
-  xhr.open('GET', url);
-
-  //Send the request over the network
-  xhr.send();
-
-  //called after response
-  xhr.onload = function() {
-    if (xhr.status != 200) { 
-      //analyze HTTP status of the response
-      UpdateLine("1", "Aborted")
-      UpdateLine("2", `DB-Entry: ${xhr.responseURL} Error ${xhr.status}: ${xhr.statusText}`);
-      UpdateLine("3", "Invalid link")
-    } else {
-      //response
-      var title = JSON.parse(xhr.response).title;
-      var url = AddHttps(title);
-      if (isValidUrl(url)){
-        Redirect(url);
+    function redirect(url) {
+      try {
+        window.location.replace(url);
+      } catch (e) {
+        window.location.href = url;
       }
-      else {
-        alert("invalid URL: " + url);
+    }
+
+    // ========== UI Update Functions ==========
+    function updateRedirectMessage(message) {
+      var el = document.getElementById('redirectMessage');
+      if (el) el.textContent = message;
+    }
+
+    function updateRedirectDetails(details) {
+      var el = document.getElementById('redirectDetails');
+      if (el) el.textContent = details;
+    }
+
+    function showRedirectError(message) {
+      var el = document.getElementById('redirectError');
+      if (el) {
+        el.textContent = message;
+        el.style.display = 'block';
       }
-  }
-  };
+      updateRedirectMessage('Error');
+    }
 
-  xhr.onerror = function() {
-    alert("Request failed");
-  };''
-}
+    function hideRedirectSpinner() {
+      var el = document.getElementById('redirectSpinner');
+      if (el) el.style.display = 'none';
+    }
 
-function UpdateLine(id, txt){
-  document.getElementById(id).innerHTML = txt;
-}
+    // ========== GitHub Issue Fetching ==========
+    async function fetchIssue(issueNumber) {
+      const issueUrl = `${CONFIG.apiURL}${CONFIG.repoUrl}${CONFIG.endpoint}/${issueNumber}`;
+      
+      try {
+        const response = await fetch(issueUrl);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
 
-//===Config===
-var apiURL = "https://api.github.com/repos";
-var repoUrl = "/srt4-me/srt4.me-DB"
-var entpoint = "/issues"
-//===Config End===
+        const issue = await response.json();
+        return issue;
+      } catch (error) {
+        console.error('Error fetching issue:', error);
+        throw error;
+      }
+    }
 
-var pathname = new URL(window.location.href).pathname.split("/");
+    // ========== TOML Parser (from index-v2.html) ==========
+    function parseTOML(tomlString) {
+      const result = {};
+      const lines = tomlString.split('\n');
+      let currentArray = null;
+      let currentArrayKey = null;
+      let inMultilineString = false;
+      let multilineString = '';
+      let multilineKey = null;
+      let multilineStringType = null;
 
-var nr = pathname[pathname.length - 1];
-var issueUrl = apiURL + repoUrl + entpoint + "/" + nr;
+      for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+        let trimmedLine = line.trim();
+        
+        if (!inMultilineString && (!trimmedLine || trimmedLine.startsWith('#'))) continue;
 
-if (Ratelimited()){
-  UpdateLine("2", "Aborted");
-  UpdateLine("3", "Ratelimited or Forward Looped");
-  alert("Ratelimited please refresh the site");
-}
-else{
-  RedirectIssueTitle(issueUrl);
-}
+        if (inMultilineString) {
+          if (multilineStringType === 'triple') {
+            if (trimmedLine.endsWith('"""')) {
+              multilineString += line.slice(0, line.lastIndexOf('"""'));
+              result[multilineKey] = multilineString;
+              inMultilineString = false;
+              multilineString = '';
+              multilineKey = null;
+              multilineStringType = null;
+            } else {
+              multilineString += line + '\n';
+            }
+          } else if (multilineStringType === 'single') {
+            if (trimmedLine.endsWith('"')) {
+              multilineString += line.slice(0, line.lastIndexOf('"'));
+              result[multilineKey] = multilineString;
+              inMultilineString = false;
+              multilineString = '';
+              multilineKey = null;
+              multilineStringType = null;
+            } else {
+              multilineString += line + '\n';
+            }
+          }
+          continue;
+        }
+
+        if (trimmedLine.includes('"""')) {
+          const parts = trimmedLine.split('"""');
+          if (parts.length >= 2) {
+            const keyMatch = parts[0].match(/^([\w-]+)\s*=\s*$/);
+            if (keyMatch) {
+              multilineKey = keyMatch[1];
+              multilineString = parts[1] || '';
+              if (trimmedLine.endsWith('"""') && !trimmedLine.includes('"""', trimmedLine.indexOf('"""') + 3)) {
+                result[multilineKey] = multilineString;
+                multilineString = '';
+                multilineKey = null;
+              } else {
+                inMultilineString = true;
+                multilineStringType = 'triple';
+              }
+              continue;
+            }
+          }
+        }
+
+        const singleQuoteMatch = trimmedLine.match(/^([\w-]+)\s*=\s*"([^"]*)$/);
+        if (singleQuoteMatch) {
+          multilineKey = singleQuoteMatch[1];
+          multilineString = singleQuoteMatch[2] || '';
+          inMultilineString = true;
+          multilineStringType = 'single';
+          continue;
+        }
+
+        const arrayTableMatch = line.match(/^\[\[([\w-]+)\]\]$/);
+        if (arrayTableMatch) {
+          currentArrayKey = arrayTableMatch[1];
+          if (!result[currentArrayKey]) {
+            result[currentArrayKey] = [];
+          }
+          currentArray = {};
+          result[currentArrayKey].push(currentArray);
+          continue;
+        }
+
+        if (line.startsWith('[') && line.endsWith(']')) {
+          continue;
+        }
+
+        const kvMatch = line.match(/^([\w-]+)\s*=\s*(.+)$/);
+        if (kvMatch) {
+          const key = kvMatch[1];
+          let value = kvMatch[2].trim();
+
+          if ((value.startsWith('"') && value.endsWith('"')) ||
+              (value.startsWith("'") && value.endsWith("'"))) {
+            value = value.slice(1, -1);
+            value = value.replace(/\\"/g, '"').replace(/\\'/g, "'");
+          }
+
+          if (value === 'true') value = true;
+          else if (value === 'false') value = false;
+          else if (/^-?\d+$/.test(value)) value = parseInt(value, 10);
+          else if (/^-?\d*\.\d+$/.test(value)) value = parseFloat(value);
+
+          if (currentArray !== null) {
+            currentArray[key] = value;
+          } else {
+            result[key] = value;
+          }
+        }
+      }
+
+      return result;
+    }
+
+    // ========== Smartlink Page Functions (from index-v2.html) ==========
+    function getInitials(name) {
+      if (!name) return '?';
+      const words = name.trim().split(/\s+/);
+      if (words.length >= 2) {
+        return (words[0][0] + words[words.length - 1][0]).toUpperCase();
+      }
+      return name.substring(0, 2).toUpperCase();
+    }
+
+    function isBase64Image(str) {
+      return str && typeof str === 'string' && str.startsWith('data:image/');
+    }
+
+    function isUrl(str) {
+      if (!str || typeof str !== 'string') return false;
+      return str.startsWith('http://') || 
+             str.startsWith('https://') || 
+             str.startsWith('//');
+    }
+
+    function extractImageSrc(htmlString) {
+      if (!htmlString || typeof htmlString !== 'string') return null;
+      
+      const normalized = htmlString.replace(/\s+/g, ' ').trim();
+      
+      const imgMatch = normalized.match(/<img[^>]*src\s*=\s*["']([^"']+)["'][^>]*>/i);
+      if (imgMatch && imgMatch[1]) {
+        return imgMatch[1].trim();
+      }
+      
+      const srcMatch = normalized.match(/src\s*=\s*["']([^"']+)["']/i);
+      if (srcMatch && srcMatch[1]) {
+        return srcMatch[1].trim();
+      }
+      
+      return null;
+    }
+
+    function setAvatar(avatarEl, avatarValue, fallbackName) {
+      avatarEl.innerHTML = '';
+      
+      const avatarStr = avatarValue != null ? String(avatarValue) : '';
+      
+      if (!avatarStr || avatarStr.trim() === '') {
+        avatarEl.style.display = 'none';
+        return Promise.resolve();
+      }
+
+      avatarEl.style.display = 'flex';
+
+      if (isBase64Image(avatarStr)) {
+        const img = document.createElement('img');
+        const waitForLoad = new Promise(resolve => {
+          img.onload = () => resolve();
+          img.onerror = () => {
+            avatarEl.textContent = getInitials(fallbackName);
+            resolve();
+          };
+        });
+        img.src = avatarStr;
+        img.alt = fallbackName || 'Profile';
+        avatarEl.appendChild(img);
+        return waitForLoad;
+      }
+
+      const extractedSrc = extractImageSrc(avatarStr);
+      if (extractedSrc) {
+        const img = document.createElement('img');
+        const waitForLoad = new Promise(resolve => {
+          img.onload = () => resolve();
+          img.onerror = () => {
+            avatarEl.textContent = getInitials(fallbackName);
+            resolve();
+          };
+        });
+        img.src = addHttps(extractedSrc);
+        img.alt = fallbackName || 'Profile';
+        avatarEl.appendChild(img);
+        return waitForLoad;
+      }
+
+      if (isUrl(avatarStr)) {
+        const img = document.createElement('img');
+        const waitForLoad = new Promise(resolve => {
+          img.onload = () => resolve();
+          img.onerror = () => {
+            avatarEl.textContent = getInitials(fallbackName);
+            resolve();
+          };
+        });
+        img.src = addHttps(avatarStr);
+        img.alt = fallbackName || 'Profile';
+        avatarEl.appendChild(img);
+        return waitForLoad;
+      }
+
+      avatarEl.textContent = avatarStr.substring(0, 2).toUpperCase();
+      return Promise.resolve();
+    }
+
+    function showError(message) {
+      const errorEl = document.getElementById('error');
+      if (errorEl) {
+        errorEl.textContent = message;
+        errorEl.classList.add('show');
+      }
+    }
+
+    function hideLoading() {
+      const loadingEl = document.getElementById('loading');
+      const profileEl = document.getElementById('profile');
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (profileEl) profileEl.style.display = 'block';
+    }
+
+    async function buildSmartlinkPage(issueBody) {
+      try {
+        // Hide redirect container, show smartlink container
+        const redirectContainer = document.getElementById('redirectContainer');
+        const smartlinkContainer = document.getElementById('smartlinkContainer');
+        if (redirectContainer) redirectContainer.style.display = 'none';
+        if (smartlinkContainer) {
+          smartlinkContainer.classList.add('show');
+        }
+
+        const data = parseTOML(issueBody);
+
+        if (data['site-title']) {
+          document.title = data['site-title'];
+        }
+
+        const avatarEl = document.getElementById('avatar');
+        await setAvatar(avatarEl, data.avatar, data.title);
+
+        const nameEl = document.getElementById('name');
+        if (data.title && data.title.trim() !== '') {
+          nameEl.textContent = data.title;
+          nameEl.style.display = 'block';
+        } else {
+          nameEl.style.display = 'none';
+        }
+
+        const bioEl = document.getElementById('bio');
+        const bioText = data.bio || data.description;
+        if (bioText && bioText.trim() !== '') {
+          bioEl.textContent = bioText;
+          bioEl.style.display = 'block';
+        } else {
+          bioEl.style.display = 'none';
+        }
+
+        const linksContainer = document.getElementById('links');
+        linksContainer.innerHTML = '';
+
+        if (data.links && Array.isArray(data.links) && data.links.length > 0) {
+          data.links.forEach(link => {
+            if (!link.url || !link.text) return;
+
+            const a = document.createElement('a');
+            const url = link.url.startsWith('mailto:') 
+              ? link.url 
+              : addHttps(link.url);
+            
+            if (isValidUrl(url) || link.url.startsWith('mailto:')) {
+              a.href = url;
+              a.textContent = link.text;
+              
+              if (!link.url.startsWith('mailto:')) {
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+              }
+              
+              linksContainer.appendChild(a);
+            }
+          });
+        } else {
+          linksContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 1rem;">No links available</p>';
+        }
+
+        const footer = document.getElementById('footer');
+        if (footer) footer.classList.add('show');
+
+        hideLoading();
+      } catch (error) {
+        console.error('Error parsing issue body:', error);
+        showError(`Error parsing data: ${error.message}`);
+        hideLoading();
+      }
+    }
+
+    // ========== Main Logic ==========
+    async function init() {
+      try {
+        // Check rate limiting
+        if (isRateLimited()) {
+          updateRedirectMessage('Aborted');
+          updateRedirectDetails('Ratelimited or Forward Looped');
+          showRedirectError('Ratelimited please refresh the site');
+          hideRedirectSpinner();
+          return;
+        }
+
+        // Extract issue number from URL query parameter or pathname
+        let issueNumber = null;
+        
+        // First, check for query parameter (e.g., ?issue=2)
+        const urlParams = new URLSearchParams(window.location.search);
+        const issueParam = urlParams.get('issue');
+        if (issueParam && !isNaN(issueParam)) {
+          issueNumber = parseInt(issueParam);
+        } else {
+          // Fall back to pathname (e.g., /404.html/2)
+          const pathname = window.location.pathname.split('/').filter(p => p);
+          if (pathname.length > 0 && !isNaN(pathname[pathname.length - 1])) {
+            issueNumber = parseInt(pathname[pathname.length - 1]);
+          }
+        }
+
+        if (!issueNumber) {
+          updateRedirectMessage('Error');
+          updateRedirectDetails('No valid issue number found in URL. Use ?issue=2 or include issue number in pathname');
+          showRedirectError('Invalid URL: No issue number provided');
+          hideRedirectSpinner();
+          return;
+        }
+
+        // Fetch issue from GitHub
+        updateRedirectMessage('Loading...');
+        updateRedirectDetails(`Fetching issue #${issueNumber}...`);
+        
+        const issue = await fetchIssue(issueNumber);
+
+        if (!issue || !issue.title) {
+          updateRedirectMessage('Error');
+          updateRedirectDetails(`Issue #${issueNumber} not found or has no title`);
+          showRedirectError('Invalid issue: Title not found');
+          hideRedirectSpinner();
+          return;
+        }
+
+        const title = issue.title.trim();
+
+        // Check if title contains "Smartlink" FIRST (case-insensitive)
+        // This takes priority over URL detection to prevent false redirects
+        if (title.toLowerCase().includes('smartlink')) {
+          // Display smartlink page
+          if (!issue.body) {
+            updateRedirectMessage('Error');
+            updateRedirectDetails('Issue body is empty');
+            showRedirectError('Cannot create smartlink: Issue body is empty');
+            hideRedirectSpinner();
+            return;
+          }
+
+          updateRedirectMessage('Loading smartlink...');
+          updateRedirectDetails('Preparing your smartlink page...');
+          
+          await buildSmartlinkPage(issue.body);
+          hideRedirectSpinner();
+          return;
+        }
+
+        // Check if title is a valid URL (only if not a Smartlink)
+        const urlWithHttps = addHttps(title);
+        if (isValidUrl(urlWithHttps)) {
+          // Redirect to URL
+          updateRedirectMessage('Redirecting...');
+          updateRedirectDetails(`Redirecting to: ${urlWithHttps}`);
+          hideRedirectSpinner();
+          setTimeout(() => {
+            redirect(urlWithHttps);
+          }, 500);
+          return;
+        }
+
+        // Neither URL nor Smartlink
+        updateRedirectMessage('Error');
+        updateRedirectDetails(`Issue title: "${title}"`);
+        showRedirectError('Issue title must be a valid URL or contain "Smartlink"');
+        hideRedirectSpinner();
+
+      } catch (error) {
+        console.error('Initialization error:', error);
+        updateRedirectMessage('Error');
+        updateRedirectDetails(`Error: ${error.message}`);
+        showRedirectError(`Failed to process request: ${error.message}`);
+        hideRedirectSpinner();
+      }
+    }
+
+    // Start the application
+    init();
   </script>
-  <!--
-  <script src="complete.js"></script>
-  <script src="main.js"></script>
-  -->
 </body>
 </html>
