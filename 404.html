@@ -260,6 +260,181 @@
         font-size: 2rem;
       }
     }
+
+    /* Tab System Styles */
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid #e5e7eb;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+
+    .tab-button {
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      color: #666;
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      position: relative;
+      bottom: -2px;
+    }
+
+    .tab-button:hover {
+      color: #667eea;
+      background: rgba(102, 126, 234, 0.05);
+      border-radius: 8px 8px 0 0;
+    }
+
+    .tab-button.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+      font-weight: 600;
+    }
+
+    .tab-panels {
+      width: 100%;
+    }
+
+    .tab-panel {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .tab-panel-content {
+      width: 100%;
+    }
+
+    @media (max-width: 640px) {
+      .tabs {
+        gap: 0.25rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .tab-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+    }
+
+    /* Redirect Countdown Styles */
+    .redirect-countdown-container {
+      text-align: center;
+      padding: 3rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+    }
+
+    .countdown-display {
+      font-size: 5rem;
+      font-weight: 700;
+      color: #667eea;
+      margin: 2rem 0;
+      line-height: 1;
+      animation: pulse 1s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+      }
+    }
+
+    .countdown-message {
+      font-size: 1.25rem;
+      color: #666;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    .redirect-url-preview {
+      font-size: 0.95rem;
+      color: #9ca3af;
+      margin-bottom: 2rem;
+      word-break: break-all;
+      padding: 0 1rem;
+      max-width: 100%;
+    }
+
+    .countdown-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 2.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 16px;
+      text-align: center;
+      text-decoration: none;
+      color: white;
+      font-weight: 600;
+      font-size: 1.05rem;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .countdown-button:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+      background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+
+    .countdown-button:active {
+      transform: translateY(0) scale(1);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    @media (max-width: 640px) {
+      .redirect-countdown-container {
+        padding: 2rem 1.5rem;
+        min-height: 300px;
+      }
+
+      .countdown-display {
+        font-size: 4rem;
+        margin: 1.5rem 0;
+      }
+
+      .countdown-message {
+        font-size: 1.1rem;
+      }
+
+      .countdown-button {
+        padding: 0.875rem 2rem;
+        font-size: 1rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -279,31 +454,42 @@
 
   <!-- Smartlink Page Container -->
   <main id="smartlinkContainer">
-    <div class="loading" id="loading">
-      <div class="spinner"></div>
-      <p>Loading profile...</p>
+    <!-- Tab Navigation (only shown if multiple issues) -->
+    <div class="tabs" id="tabs" style="display: none;"></div>
+
+    <!-- Single Issue View (default) -->
+    <div id="singleIssueView">
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Loading profile...</p>
+      </div>
+
+      <div class="profile" id="profile" style="display: none;">
+        <div class="avatar" id="avatar"></div>
+        <h1 id="name">Loading...</h1>
+        <p class="bio" id="bio">Loading profile information...</p>
+        <div class="error" id="error"></div>
+      </div>
+
+      <nav class="links" id="links"></nav>
+
+      <footer id="footer">
+        <p>Powered by <a href="https://srt4.me" target="_blank" rel="noopener noreferrer">srt4.me</a></p>
+      </footer>
     </div>
 
-    <div class="profile" id="profile" style="display: none;">
-      <div class="avatar" id="avatar"></div>
-      <h1 id="name">Loading...</h1>
-      <p class="bio" id="bio">Loading profile information...</p>
-      <div class="error" id="error"></div>
-    </div>
-
-    <nav class="links" id="links"></nav>
-
-    <footer id="footer">
-      <p>Powered by <a href="https://srt4.me" target="_blank" rel="noopener noreferrer">srt4.me</a></p>
-    </footer>
+    <!-- Tab Panels Container (for multiple issues) -->
+    <div class="tab-panels" id="tabPanels" style="display: none;"></div>
   </main>
 
   <script>
     // Configuration
     const CONFIG = {
       apiURL: 'https://api.github.com/repos',
-      repoUrl: '/srt4-me/srt4.me-DB',
-      endpoint: '/issues'
+      repoUrl: '/srt4-me/srt4.me-DB',  // Original repo for numeric issues
+      endpoint: '/issues',
+      plusRepoUrl: '/srt4-me/srt4.me-Plus-DB',  // New repo for keyword search
+      searchAPI: 'https://api.github.com/search/issues'  // For label-based search
     };
 
     // ========== Rate Limiting ==========
@@ -368,18 +554,53 @@
           return true;
         }
         
-        // For domain names, require at least one dot (for TLD) or be a valid special case
-        // This prevents single words like "smartlink" from being valid
+        // For domain names, require at least one dot (for TLD)
         if (hostname.includes('.')) {
-          // Must have at least one dot and not start/end with dot
           const parts = hostname.split('.');
-          if (parts.length >= 2 && parts[0].length > 0 && parts[parts.length - 1].length > 0) {
-            // Check that TLD is at least 2 characters (e.g., .com, .org)
-            const tld = parts[parts.length - 1];
-            if (tld.length >= 2) {
-              return true;
+          
+          // Must have at least 2 parts (domain and TLD)
+          if (parts.length < 2) {
+            return false;
+          }
+          
+          // Check each part
+          for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
+            
+            // Each part must not be empty
+            if (!part || part.length === 0) {
+              return false;
+            }
+            
+            // Last part is TLD - must be letters only (no numbers, no hyphens)
+            if (i === parts.length - 1) {
+              const tldRegex = /^[a-zA-Z]{2,}$/;
+              if (!tldRegex.test(part)) {
+                return false;
+              }
+            } else {
+              // Domain parts can contain letters, numbers, and hyphens
+              // But must start and end with alphanumeric
+              const domainPartRegex = /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/;
+              if (!domainPartRegex.test(part)) {
+                return false;
+              }
             }
           }
+          
+          // TLD must be at least 2 characters
+          const tld = parts[parts.length - 1];
+          if (tld.length < 2) {
+            return false;
+          }
+          
+          // Reject if entire hostname is purely numeric (e.g., "123.45")
+          const allNumericRegex = /^[\d.]+$/;
+          if (allNumericRegex.test(hostname)) {
+            return false;
+          }
+          
+          return true;
         }
         
         // Single word without dot is not a valid URL (e.g., "smartlink")
@@ -387,6 +608,49 @@
       } catch (e) {
         return false;
       }
+    }
+
+    function isTitleUrl(title) {
+      if (!title || typeof title !== 'string') {
+        return false;
+      }
+      
+      const trimmed = title.trim();
+      
+      // Empty or very short strings are not URLs
+      if (trimmed.length < 4) {
+        return false;
+      }
+      
+      // Check for explicit URL patterns (most reliable indicator)
+      const explicitUrlPattern = /^(https?:\/\/|www\.)/i;
+      if (explicitUrlPattern.test(trimmed)) {
+        const urlWithHttps = addHttps(trimmed);
+        return isValidUrl(urlWithHttps);
+      }
+      
+      // Check if it looks like a domain (contains a dot and looks like a domain name)
+      // This is stricter - requires it to look like a real domain
+      if (trimmed.includes('.')) {
+        // Must not be purely numeric (e.g., "123.45")
+        const allNumericRegex = /^[\d.]+$/;
+        if (allNumericRegex.test(trimmed)) {
+          return false;
+        }
+        
+        // Must contain at least one letter (domains have letters)
+        const hasLetter = /[a-zA-Z]/.test(trimmed);
+        if (!hasLetter) {
+          return false;
+        }
+        
+        // Check if it's a valid URL when https:// is added
+        const urlWithHttps = addHttps(trimmed);
+        return isValidUrl(urlWithHttps);
+      }
+      
+      // No dot and no explicit protocol - not a URL
+      return false;
     }
 
     function redirect(url) {
@@ -437,6 +701,26 @@
         return issue;
       } catch (error) {
         console.error('Error fetching issue:', error);
+        throw error;
+      }
+    }
+
+    async function searchIssuesByLabel(label) {
+      // Use GitHub Search API to find issues by label in Plus repo
+      const searchQuery = `repo:srt4-me/srt4.me-Plus-DB+label:${encodeURIComponent(label)}+state:open`;
+      const searchUrl = `${CONFIG.searchAPI}?q=${searchQuery}`;
+      
+      try {
+        const response = await fetch(searchUrl);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data.items || []; // Returns array of issues
+      } catch (error) {
+        console.error('Error searching issues by label:', error);
         throw error;
       }
     }
@@ -607,52 +891,54 @@
 
       avatarEl.style.display = 'flex';
 
-      if (isBase64Image(avatarStr)) {
+      // Helper function to create image and wait for load
+      function createImageAndWait(src) {
         const img = document.createElement('img');
-        const waitForLoad = new Promise(resolve => {
-          img.onload = () => resolve();
+        // Hide image initially to prevent showing broken image icon
+        img.style.opacity = '0';
+        img.style.transition = 'opacity 0.2s ease-in';
+        
+        return new Promise(resolve => {
+          img.onload = () => {
+            // Show image once loaded
+            img.style.opacity = '1';
+            resolve();
+          };
           img.onerror = () => {
+            // Only show text fallback on error, clear image
+            avatarEl.removeChild(img);
             avatarEl.textContent = getInitials(fallbackName);
             resolve();
           };
+          
+          // Set src after attaching listeners
+          img.src = src;
+          img.alt = fallbackName || 'Profile';
+          
+          // If image is already complete (cached), show it immediately
+          if (img.complete && img.naturalHeight !== 0) {
+            img.style.opacity = '1';
+            resolve();
+          }
+          
+          avatarEl.appendChild(img);
         });
-        img.src = avatarStr;
-        img.alt = fallbackName || 'Profile';
-        avatarEl.appendChild(img);
-        return waitForLoad;
+      }
+
+      if (isBase64Image(avatarStr)) {
+        return createImageAndWait(avatarStr);
       }
 
       const extractedSrc = extractImageSrc(avatarStr);
       if (extractedSrc) {
-        const img = document.createElement('img');
-        const waitForLoad = new Promise(resolve => {
-          img.onload = () => resolve();
-          img.onerror = () => {
-            avatarEl.textContent = getInitials(fallbackName);
-            resolve();
-          };
-        });
-        img.src = addHttps(extractedSrc);
-        img.alt = fallbackName || 'Profile';
-        avatarEl.appendChild(img);
-        return waitForLoad;
+        return createImageAndWait(addHttps(extractedSrc));
       }
 
       if (isUrl(avatarStr)) {
-        const img = document.createElement('img');
-        const waitForLoad = new Promise(resolve => {
-          img.onload = () => resolve();
-          img.onerror = () => {
-            avatarEl.textContent = getInitials(fallbackName);
-            resolve();
-          };
-        });
-        img.src = addHttps(avatarStr);
-        img.alt = fallbackName || 'Profile';
-        avatarEl.appendChild(img);
-        return waitForLoad;
+        return createImageAndWait(addHttps(avatarStr));
       }
 
+      // If it's not an image, show text immediately
       avatarEl.textContent = avatarStr.substring(0, 2).toUpperCase();
       return Promise.resolve();
     }
@@ -672,26 +958,148 @@
       if (profileEl) profileEl.style.display = 'block';
     }
 
-    async function buildSmartlinkPage(issueBody) {
+    function setFavicon(faviconValue) {
+      if (!faviconValue) return;
+      
+      // Extract URL from img tag if provided, otherwise use as-is
+      let faviconUrl = faviconValue;
+      if (typeof faviconValue === 'string' && faviconValue.includes('<img')) {
+        const extractedSrc = extractImageSrc(faviconValue);
+        if (extractedSrc) {
+          faviconUrl = extractedSrc;
+        } else {
+          return; // Invalid img tag, skip
+        }
+      }
+      
+      // Remove existing favicon if any
+      let existingFavicon = document.querySelector('link[rel="icon"]') || document.querySelector('link[rel="shortcut icon"]');
+      if (existingFavicon) {
+        existingFavicon.remove();
+      }
+      
+      // Create new favicon link
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.type = 'image/x-icon';
+      link.href = addHttps(faviconUrl);
+      document.head.appendChild(link);
+    }
+
+    function extractFaviconFromIssue(issue) {
+      if (!issue) return null;
+      
+      // Check GitHub labels for favicon
+      if (issue.labels && Array.isArray(issue.labels)) {
+        for (let label of issue.labels) {
+          const labelName = label.name.toLowerCase();
+          // Check for labels like "favicon:https://example.com/favicon.ico"
+          if (labelName.startsWith('favicon:')) {
+            const faviconUrl = label.name.substring(8).trim(); // Remove "favicon:" prefix
+            if (faviconUrl) {
+              return faviconUrl;
+            }
+          }
+        }
+      }
+      
+      // Check issue body for GitHub img tags
+      if (issue.body) {
+        // Look for GitHub img tag format: <img ... src="..." />
+        const imgTagMatch = issue.body.match(/<img[^>]*src\s*=\s*["']([^"']+)["'][^>]*>/i);
+        if (imgTagMatch && imgTagMatch[1]) {
+          return imgTagMatch[1].trim();
+        }
+        
+        // Fallback: Look for image URLs in the body (GitHub attachment format)
+        const imageMatch = issue.body.match(/https:\/\/.*\.githubusercontent\.com\/.*\.(ico|png|jpg|jpeg|svg)/i);
+        if (imageMatch) {
+          return imageMatch[0];
+        }
+      }
+      
+      return null;
+    }
+
+    async function buildSmartlinkPage(issueBody, issue = null, container = null) {
       try {
-        // Hide redirect container, show smartlink container
-        const redirectContainer = document.getElementById('redirectContainer');
-        const smartlinkContainer = document.getElementById('smartlinkContainer');
-        if (redirectContainer) redirectContainer.style.display = 'none';
-        if (smartlinkContainer) {
-          smartlinkContainer.classList.add('show');
+        // If container is provided, we're building for a tab panel
+        // Otherwise, use the default single issue view
+        const isTabPanel = container !== null;
+        
+        if (!isTabPanel) {
+          // Hide redirect container, show smartlink container
+          const redirectContainer = document.getElementById('redirectContainer');
+          const smartlinkContainer = document.getElementById('smartlinkContainer');
+          if (redirectContainer) redirectContainer.style.display = 'none';
+          if (smartlinkContainer) {
+            smartlinkContainer.classList.add('show');
+          }
         }
 
         const data = parseTOML(issueBody);
+        
+        // Set favicon - check TOML first, then GitHub issue labels/attachments (only for first issue)
+        if (!isTabPanel) {
+          let faviconUrl = data.favicon || null;
+          if (!faviconUrl && issue) {
+            faviconUrl = extractFaviconFromIssue(issue);
+          }
+          if (faviconUrl) {
+            setFavicon(faviconUrl);
+          }
 
-        if (data['site-title']) {
-          document.title = data['site-title'];
+          if (data['site-title']) {
+            document.title = data['site-title'];
+          }
         }
 
-        const avatarEl = document.getElementById('avatar');
+        // Get or create elements based on whether we're in a tab panel
+        let avatarEl, nameEl, bioEl, linksContainer, footerEl;
+        
+        if (isTabPanel) {
+          // Create elements for tab panel
+          avatarEl = container.querySelector('.avatar') || document.createElement('div');
+          nameEl = container.querySelector('h1') || document.createElement('h1');
+          bioEl = container.querySelector('.bio') || document.createElement('p');
+          linksContainer = container.querySelector('.links') || document.createElement('nav');
+          footerEl = container.querySelector('footer') || document.createElement('footer');
+          
+          // Set up structure if not exists
+          if (!container.querySelector('.profile')) {
+            const profile = document.createElement('div');
+            profile.className = 'profile';
+            profile.appendChild(avatarEl);
+            profile.appendChild(nameEl);
+            profile.appendChild(bioEl);
+            container.appendChild(profile);
+          }
+          
+          if (!container.querySelector('.links')) {
+            linksContainer.className = 'links';
+            container.appendChild(linksContainer);
+          }
+          
+          if (!container.querySelector('footer')) {
+            footerEl.innerHTML = '<p>Powered by <a href="https://srt4.me" target="_blank" rel="noopener noreferrer">srt4.me</a></p>';
+            container.appendChild(footerEl);
+          }
+        } else {
+          // Use existing elements
+          avatarEl = document.getElementById('avatar');
+          nameEl = document.getElementById('name');
+          bioEl = document.getElementById('bio');
+          linksContainer = document.getElementById('links');
+          footerEl = document.getElementById('footer');
+        }
+
+        // Set up avatar element
+        if (!avatarEl.classList.contains('avatar')) {
+          avatarEl.className = 'avatar';
+        }
         await setAvatar(avatarEl, data.avatar, data.title);
 
-        const nameEl = document.getElementById('name');
+        // Set name
         if (data.title && data.title.trim() !== '') {
           nameEl.textContent = data.title;
           nameEl.style.display = 'block';
@@ -699,7 +1107,10 @@
           nameEl.style.display = 'none';
         }
 
-        const bioEl = document.getElementById('bio');
+        // Set bio
+        if (!bioEl.classList.contains('bio')) {
+          bioEl.className = 'bio';
+        }
         const bioText = data.bio || data.description;
         if (bioText && bioText.trim() !== '') {
           bioEl.textContent = bioText;
@@ -708,8 +1119,11 @@
           bioEl.style.display = 'none';
         }
 
-        const linksContainer = document.getElementById('links');
+        // Build links
         linksContainer.innerHTML = '';
+        if (!linksContainer.classList.contains('links')) {
+          linksContainer.className = 'links';
+        }
 
         if (data.links && Array.isArray(data.links) && data.links.length > 0) {
           data.links.forEach(link => {
@@ -736,15 +1150,381 @@
           linksContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 1rem;">No links available</p>';
         }
 
-        const footer = document.getElementById('footer');
-        if (footer) footer.classList.add('show');
+        // Show footer
+        if (footerEl && !isTabPanel) {
+          footerEl.classList.add('show');
+        }
 
-        hideLoading();
+        if (!isTabPanel) {
+          hideLoading();
+        }
       } catch (error) {
         console.error('Error parsing issue body:', error);
-        showError(`Error parsing data: ${error.message}`);
-        hideLoading();
+        if (!isTabPanel) {
+          showError(`Error parsing data: ${error.message}`);
+          hideLoading();
+        }
       }
+    }
+
+    // ========== Redirect Detection and Countdown ==========
+    // Store active countdowns: Map<tabIndex, { intervalId, timeoutId, cancel() }>
+    const activeCountdowns = new Map();
+
+    function isRedirectIssue(issue) {
+      // Check if issue title is a valid URL
+      if (issue.title) {
+        const title = issue.title.trim();
+        if (isTitleUrl(title)) {
+          const urlWithHttps = addHttps(title);
+          return { isRedirect: true, redirectUrl: urlWithHttps };
+        }
+      }
+
+      // Check if issue body contains redirect directive
+      if (issue.body) {
+        try {
+          const data = parseTOML(issue.body);
+          if (data.redirect) {
+            const redirectUrl = addHttps(data.redirect);
+            if (isValidUrl(redirectUrl)) {
+              return { isRedirect: true, redirectUrl: redirectUrl };
+            }
+          }
+        } catch (e) {
+          // TOML parsing failed, not a redirect
+        }
+      }
+
+      return { isRedirect: false, redirectUrl: null };
+    }
+
+    function buildRedirectCountdown(container, redirectUrl, tabIndex) {
+      // Clear container
+      container.innerHTML = '';
+
+      // Create countdown container
+      const countdownContainer = document.createElement('div');
+      countdownContainer.className = 'redirect-countdown-container';
+
+      // Create countdown display
+      const countdownDisplay = document.createElement('div');
+      countdownDisplay.className = 'countdown-display';
+      countdownDisplay.textContent = '3';
+      countdownContainer.appendChild(countdownDisplay);
+
+      // Create message
+      const message = document.createElement('div');
+      message.className = 'countdown-message';
+      message.textContent = 'Redirecting in...';
+      countdownContainer.appendChild(message);
+
+      // Create URL preview
+      const urlPreview = document.createElement('div');
+      urlPreview.className = 'redirect-url-preview';
+      urlPreview.textContent = redirectUrl;
+      countdownContainer.appendChild(urlPreview);
+
+      // Create "Go Now" button
+      const goButton = document.createElement('button');
+      goButton.className = 'countdown-button';
+      goButton.textContent = 'Go Now';
+      countdownContainer.appendChild(goButton);
+
+      container.appendChild(countdownContainer);
+
+      // Countdown state
+      let countdown = 3;
+      let intervalId = null;
+      let timeoutId = null;
+
+      // Update countdown display
+      function updateCountdown() {
+        countdown--;
+        if (countdown > 0) {
+          countdownDisplay.textContent = countdown.toString();
+        } else {
+          cancelCountdown();
+          redirect(redirectUrl);
+        }
+      }
+
+      // Cancel countdown
+      function cancelCountdown() {
+        if (intervalId !== null) {
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+        if (timeoutId !== null) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
+        activeCountdowns.delete(tabIndex);
+      }
+
+      // Start countdown
+      function startCountdown() {
+        // Cancel any existing countdown for this tab
+        cancelCountdown();
+
+        // Start countdown at 3
+        countdown = 3;
+        countdownDisplay.textContent = '3';
+        
+        // Update every second (will show 2, then 1, then redirect)
+        intervalId = setInterval(updateCountdown, 1000);
+        
+        // Final redirect after 3 seconds (backup in case interval doesn't fire)
+        timeoutId = setTimeout(() => {
+          cancelCountdown();
+          redirect(redirectUrl);
+        }, 3000);
+
+        // Store in active countdowns
+        activeCountdowns.set(tabIndex, {
+          intervalId: intervalId,
+          timeoutId: timeoutId,
+          cancel: cancelCountdown
+        });
+      }
+
+      // Button click handler
+      goButton.addEventListener('click', () => {
+        cancelCountdown();
+        redirect(redirectUrl);
+      });
+
+      // Return control object
+      return {
+        start: startCountdown,
+        cancel: cancelCountdown
+      };
+    }
+
+    function getIssuePriority(issue) {
+      // Extract priority from issue TOML body
+      if (!issue || !issue.body) {
+        return 0; // Default priority
+      }
+      
+      try {
+        const data = parseTOML(issue.body);
+        let priority = data.prio;
+        
+        // Handle both string and number formats
+        if (priority === undefined || priority === null) {
+          return 0;
+        }
+        
+        // Convert string to number if needed
+        if (typeof priority === 'string') {
+          const parsed = parseInt(priority, 10);
+          return isNaN(parsed) ? 0 : parsed;
+        }
+        
+        // Already a number
+        if (typeof priority === 'number') {
+          return priority;
+        }
+        
+        return 0; // Invalid type, default to 0
+      } catch (e) {
+        // TOML parsing failed, default to 0
+        return 0;
+      }
+    }
+
+    function sortIssuesByPriority(issues) {
+      // Create array with original index and priority
+      const issuesWithPriority = issues.map((issue, originalIndex) => ({
+        issue: issue,
+        originalIndex: originalIndex,
+        priority: getIssuePriority(issue)
+      }));
+      
+      // Sort by priority (ascending: -2, -1, 0, 1, 2...)
+      // For same priority, maintain original order (stable sort)
+      issuesWithPriority.sort((a, b) => {
+        if (a.priority !== b.priority) {
+          return a.priority - b.priority;
+        }
+        // Same priority, maintain original order
+        return a.originalIndex - b.originalIndex;
+      });
+      
+      // Return sorted issues array
+      return issuesWithPriority.map(item => item.issue);
+    }
+
+    function getTabLabel(issue) {
+      // Try to get site-title from issue body, otherwise use issue title
+      if (issue.body) {
+        try {
+          const data = parseTOML(issue.body);
+          if (data['site-title']) {
+            return data['site-title'];
+          }
+          if (data.title) {
+            return data.title;
+          }
+        } catch (e) {
+          // Fall through to use issue title
+        }
+      }
+      return issue.title || `Issue #${issue.number}`;
+    }
+
+    async function buildTabSystem(issues) {
+      if (!issues || issues.length === 0) {
+        return;
+      }
+
+      // Sort issues by priority before creating tabs
+      issues = sortIssuesByPriority(issues);
+
+      // Hide single issue view, show tab panels
+      const singleIssueView = document.getElementById('singleIssueView');
+      const tabPanels = document.getElementById('tabPanels');
+      const tabs = document.getElementById('tabs');
+      
+      if (singleIssueView) singleIssueView.style.display = 'none';
+      if (tabPanels) {
+        tabPanels.style.display = 'block';
+        tabPanels.innerHTML = '';
+      }
+      if (tabs) {
+        tabs.style.display = 'flex';
+        tabs.innerHTML = '';
+      }
+
+      // Hide redirect container, show smartlink container
+      const redirectContainer = document.getElementById('redirectContainer');
+      const smartlinkContainer = document.getElementById('smartlinkContainer');
+      if (redirectContainer) redirectContainer.style.display = 'none';
+      if (smartlinkContainer) {
+        smartlinkContainer.classList.add('show');
+      }
+
+      // Store countdown controllers
+      const countdownControllers = new Map();
+
+      // Find first smartlink tab (non-redirect) to set as default active
+      let defaultActiveIndex = 0;
+      for (let i = 0; i < issues.length; i++) {
+        const redirectInfo = isRedirectIssue(issues[i]);
+        if (!redirectInfo.isRedirect) {
+          defaultActiveIndex = i;
+          break;
+        }
+      }
+      // If no smartlink tabs found, use first tab (index 0)
+
+      // Store promise for active tab loading
+      let activeTabLoadPromise = Promise.resolve();
+
+      // Create tabs and panels
+      issues.forEach((issue, index) => {
+        // Check if this is a redirect issue
+        const redirectInfo = isRedirectIssue(issue);
+
+        // Create tab button
+        const tabButton = document.createElement('button');
+        tabButton.className = 'tab-button' + (index === defaultActiveIndex ? ' active' : '');
+        tabButton.setAttribute('data-tab', index);
+        tabButton.textContent = getTabLabel(issue);
+        tabButton.addEventListener('click', () => switchTab(index));
+        if (tabs) tabs.appendChild(tabButton);
+
+        // Create tab panel
+        const tabPanel = document.createElement('div');
+        tabPanel.className = 'tab-panel tab-panel-content' + (index === defaultActiveIndex ? ' active' : '');
+        tabPanel.id = `tabPanel${index}`;
+        tabPanel.setAttribute('data-is-redirect', redirectInfo.isRedirect ? 'true' : 'false');
+        if (redirectInfo.isRedirect) {
+          tabPanel.setAttribute('data-redirect-url', redirectInfo.redirectUrl);
+        }
+        if (tabPanels) tabPanels.appendChild(tabPanel);
+
+        // Build content for this tab
+        if (redirectInfo.isRedirect) {
+          // Build redirect countdown UI
+          const countdownController = buildRedirectCountdown(tabPanel, redirectInfo.redirectUrl, index);
+          countdownControllers.set(index, countdownController);
+        } else if (issue.body) {
+          // Build smartlink page - if this is the active tab, track its loading
+          const buildPromise = buildSmartlinkPage(issue.body, issue, tabPanel);
+          if (index === defaultActiveIndex) {
+            activeTabLoadPromise = buildPromise;
+          }
+        }
+      });
+
+      // Wait for active tab's avatar to load before continuing
+      await activeTabLoadPromise;
+
+      // Start countdown for default active tab if it's a redirect
+      if (countdownControllers.has(defaultActiveIndex)) {
+        countdownControllers.get(defaultActiveIndex).start();
+      }
+
+      // Set favicon and title from first smartlink tab (or first issue if no smartlink tabs)
+      const firstSmartlinkIssue = issues[defaultActiveIndex] || issues[0];
+      if (firstSmartlinkIssue) {
+        const firstIssueData = parseTOML(firstSmartlinkIssue.body || '');
+        let faviconUrl = firstIssueData.favicon || null;
+        if (!faviconUrl) {
+          faviconUrl = extractFaviconFromIssue(firstSmartlinkIssue);
+        }
+        if (faviconUrl) {
+          setFavicon(faviconUrl);
+        }
+
+        // Set page title from first smartlink issue
+        if (firstIssueData['site-title']) {
+          document.title = firstIssueData['site-title'];
+        }
+      }
+    }
+
+    function switchTab(tabIndex) {
+      // Cancel any active countdowns
+      activeCountdowns.forEach((controller, index) => {
+        if (controller && controller.cancel) {
+          controller.cancel();
+        }
+      });
+      activeCountdowns.clear();
+
+      // Update tab buttons
+      const tabButtons = document.querySelectorAll('.tab-button');
+      tabButtons.forEach((btn, index) => {
+        if (index === tabIndex) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      // Update tab panels
+      const tabPanels = document.querySelectorAll('.tab-panel');
+      tabPanels.forEach((panel, index) => {
+        if (index === tabIndex) {
+          panel.classList.add('active');
+          
+          // If this is a redirect tab, start the countdown
+          const isRedirect = panel.getAttribute('data-is-redirect') === 'true';
+          if (isRedirect) {
+            const redirectUrl = panel.getAttribute('data-redirect-url');
+            if (redirectUrl) {
+              // Rebuild countdown to get fresh controller
+              const countdownController = buildRedirectCountdown(panel, redirectUrl, tabIndex);
+              countdownController.start();
+            }
+          }
+        } else {
+          panel.classList.remove('active');
+        }
+      });
     }
 
     // ========== Main Logic ==========
@@ -759,39 +1539,74 @@
           return;
         }
 
-        // Extract issue number from URL query parameter or pathname
-        let issueNumber = null;
+        // Extract issue parameter from URL query parameter or pathname
+        let issueParam = null;
+        let isNumeric = false;
         
-        // First, check for query parameter (e.g., ?issue=2)
+        // First, check for query parameter (e.g., ?issue=2 or ?issue=macer)
         const urlParams = new URLSearchParams(window.location.search);
-        const issueParam = urlParams.get('issue');
-        if (issueParam && !isNaN(issueParam)) {
-          issueNumber = parseInt(issueParam);
-        } else {
-          // Fall back to pathname (e.g., /404.html/2)
+        issueParam = urlParams.get('issue');
+        
+        if (!issueParam) {
+          // Fall back to pathname (e.g., /404.html/2 or /404.html/macer)
           const pathname = window.location.pathname.split('/').filter(p => p);
-          if (pathname.length > 0 && !isNaN(pathname[pathname.length - 1])) {
-            issueNumber = parseInt(pathname[pathname.length - 1]);
+          if (pathname.length > 0) {
+            issueParam = pathname[pathname.length - 1];
           }
         }
 
-        if (!issueNumber) {
+        if (!issueParam) {
           updateRedirectMessage('Error');
-          updateRedirectDetails('No valid issue number found in URL. Use ?issue=2 or include issue number in pathname');
-          showRedirectError('Invalid URL: No issue number provided');
+          updateRedirectDetails('No issue parameter found in URL. Use ?issue=2 or ?issue=keyword');
+          showRedirectError('Invalid URL: No issue parameter provided');
           hideRedirectSpinner();
           return;
         }
 
-        // Fetch issue from GitHub
-        updateRedirectMessage('Loading...');
-        updateRedirectDetails(`Fetching issue #${issueNumber}...`);
+        // Check if parameter is numeric (use original repo) or keyword (use Plus repo)
+        isNumeric = !isNaN(issueParam) && issueParam.trim() !== '';
         
-        const issue = await fetchIssue(issueNumber);
+        let issue = null;
+        let issues = [];
 
+        if (isNumeric) {
+          // Numeric: Use original repo
+          const issueNumber = parseInt(issueParam);
+          updateRedirectMessage('Loading...');
+          updateRedirectDetails(`Fetching issue #${issueNumber}...`);
+          
+          issue = await fetchIssue(issueNumber);
+        } else {
+          // Keyword: Search Plus repo by label
+          const keyword = issueParam.trim();
+          updateRedirectMessage('Loading...');
+          updateRedirectDetails(`Searching for issues with label "${keyword}"...`);
+          
+          issues = await searchIssuesByLabel(keyword);
+          
+          if (issues.length === 0) {
+            updateRedirectMessage('Error');
+            updateRedirectDetails(`No issues found with label "${keyword}"`);
+            showRedirectError(`No issues found with label: ${keyword}`);
+            hideRedirectSpinner();
+            return;
+          }
+          
+          // If multiple issues found, use tab system
+          if (issues.length > 1) {
+            await buildTabSystem(issues);
+            hideRedirectSpinner();
+            return;
+          }
+          
+          // Single issue found, use it
+          issue = issues[0];
+        }
+
+        // Process single issue (from numeric or single keyword result)
         if (!issue || !issue.title) {
           updateRedirectMessage('Error');
-          updateRedirectDetails(`Issue #${issueNumber} not found or has no title`);
+          updateRedirectDetails(`Issue not found or has no title`);
           showRedirectError('Invalid issue: Title not found');
           hideRedirectSpinner();
           return;
@@ -800,8 +1615,8 @@
         const title = issue.title.trim();
 
         // Step 1: Check if title is a valid URL
-        const urlWithHttps = addHttps(title);
-        if (isValidUrl(urlWithHttps)) {
+        if (isTitleUrl(title)) {
+          const urlWithHttps = addHttps(title);
           // Redirect to URL
           updateRedirectMessage('Redirecting...');
           updateRedirectDetails(`Redirecting to: ${urlWithHttps}`);
@@ -844,7 +1659,7 @@
           updateRedirectMessage('Loading smartlink...');
           updateRedirectDetails('Preparing your smartlink page...');
           
-          await buildSmartlinkPage(issue.body);
+          await buildSmartlinkPage(issue.body, issue);
           hideRedirectSpinner();
           
         } catch (parseError) {
@@ -853,7 +1668,7 @@
           updateRedirectMessage('Loading smartlink...');
           updateRedirectDetails('Preparing your smartlink page...');
           
-          await buildSmartlinkPage(issue.body);
+          await buildSmartlinkPage(issue.body, issue);
           hideRedirectSpinner();
         }
 
